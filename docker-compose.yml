@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=dailymotion
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - app_network
+    depends_on:
+      - db
+      - redis
+      - smtp
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dailymotion
+    networks:
+      - app_network
+    ports:
+      - "5432:5432"
+
+  db_test:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dailymotion_test
+    networks:
+      - app_network
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+  smtp:
+    build:
+      context: .
+      dockerfile: smtp.Dockerfile
+    ports:
+      - "8025:8025"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

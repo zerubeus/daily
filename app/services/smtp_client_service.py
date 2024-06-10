@@ -2,7 +2,7 @@ import httpx
 
 from app.core.logging import logger
 
-SMTP_API_URL = "http://localhost:8025/api/send_email"
+SMTP_API_URL = "http://smtp:8025/api/send_email"
 
 
 def send_email(to_email: str, code: str):
